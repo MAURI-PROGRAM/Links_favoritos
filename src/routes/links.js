@@ -25,4 +25,30 @@ router.get('/',async (req,res)=>{
 
 });
 
+router.get('/delete/:id',async (req,res)=>{
+    const {id} = req.params;
+    await pool.query('DELETE FROM links WHERE ID = ?',[id]);
+    res.redirect('/links');
+});
+router.get('/edit/:id',async (req,res)=>{
+    const {id} = req.params;
+    const link  = await pool.query('SELECT * FROM links WHERE ID = ?',[id]);
+    res.render('links/edit',{ link : link[0] });
+    
+});
+router.post('/edit/:id',async (req,res)=>{
+    const {id} = req.params;
+    const {titulo,url,descripcion} = req.body;
+    const editLink = {
+        titulo,
+        descripcion,
+        url
+        
+    }
+    await pool.query('UPDATE links set ? WHERE id = ?',[editLink,id]);
+
+    res.redirect('/links');
+    
+});
+
 module.exports=router;
